@@ -22,7 +22,7 @@ mod tests {
     use rand::SeedableRng;
     use rand_chacha::ChaCha20Rng;
     use std::env::var;
-    use zkevm_circuits::tx_circuit::TxCircuit;
+    // use zkevm_circuits::tx_circuit::TxCircuit;
 
     #[cfg_attr(not(feature = "benches"), ignore)]
     #[test]
@@ -50,7 +50,7 @@ mod tests {
 
         let chain_id: u64 = mock::MOCK_CHAIN_ID.low_u64();
         let txs = vec![mock::CORRECT_MOCK_TXS[0].clone().into()];
-        let circuit = TxCircuit::<Fr>::new(max_txs, MAX_CALLDATA, chain_id, txs);
+        // let circuit = TxCircuit::<Fr>::new(max_txs, MAX_CALLDATA, chain_id, txs);
 
         // Bench setup generation
         let setup_message = format!("{} {} with degree = {}", BENCHMARK_ID, setup_prfx, degree);
@@ -77,7 +77,7 @@ mod tests {
             Challenge255<G1Affine>,
             ChaCha20Rng,
             Blake2bWrite<Vec<u8>, G1Affine, Challenge255<G1Affine>>,
-            TxCircuit<Fr>,
+            // TxCircuit<Fr>,
         >(
             &general_params,
             &pk,

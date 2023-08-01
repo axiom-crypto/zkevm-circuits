@@ -67,7 +67,7 @@ use crate::{
         BlockTable, BytecodeTable, CopyTable, ExpTable, KeccakTable, MptTable, RwTable, TxTable,
         UXTable,
     },
-    tx_circuit::{TxCircuit, TxCircuitConfig, TxCircuitConfigArgs},
+    // tx_circuit::{TxCircuit, TxCircuitConfig, TxCircuitConfigArgs},
     util::{log2_ceil, Challenges, SubCircuit, SubCircuitConfig},
     witness::{block_convert, Block, MptUpdates},
 };
@@ -93,7 +93,7 @@ pub struct SuperCircuitConfig<F: Field> {
     u16_table: UXTable<16>,
     evm_circuit: EvmCircuitConfig<F>,
     state_circuit: StateCircuitConfig<F>,
-    tx_circuit: TxCircuitConfig<F>,
+    // tx_circuit: TxCircuitConfig<F>,
     bytecode_circuit: BytecodeCircuitConfig<F>,
     copy_circuit: CopyCircuitConfig<F>,
     keccak_circuit: KeccakCircuitConfig<F>,
@@ -165,14 +165,14 @@ impl<F: Field> SubCircuitConfig<F> for SuperCircuitConfig<F> {
                 challenges: challenges.clone(),
             },
         );
-        let tx_circuit = TxCircuitConfig::new(
-            meta,
-            TxCircuitConfigArgs {
-                tx_table: tx_table.clone(),
-                keccak_table: keccak_table.clone(),
-                challenges: challenges.clone(),
-            },
-        );
+        // let tx_circuit = TxCircuitConfig::new(
+        //     meta,
+        //     TxCircuitConfigArgs {
+        //         tx_table: tx_table.clone(),
+        //         keccak_table: keccak_table.clone(),
+        //         challenges: challenges.clone(),
+        //     },
+        // );
         let bytecode_circuit = BytecodeCircuitConfig::new(
             meta,
             BytecodeCircuitConfigArgs {
@@ -229,7 +229,7 @@ impl<F: Field> SubCircuitConfig<F> for SuperCircuitConfig<F> {
             evm_circuit,
             state_circuit,
             copy_circuit,
-            tx_circuit,
+            // tx_circuit,
             bytecode_circuit,
             keccak_circuit,
             pi_circuit,
@@ -246,7 +246,7 @@ pub struct SuperCircuit<F: Field> {
     /// State Circuit
     pub state_circuit: StateCircuit<F>,
     /// The transaction circuit that will be used in the `synthesize` step.
-    pub tx_circuit: TxCircuit<F>,
+    // pub tx_circuit: TxCircuit<F>,
     /// Public Input Circuit
     pub pi_circuit: PiCircuit<F>,
     /// Bytecode Circuit
@@ -267,9 +267,10 @@ impl<F: Field> SuperCircuit<F> {
     /// Return the number of rows required to verify a given block
     pub fn get_num_rows_required(block: &Block<F>) -> usize {
         let num_rows_evm_circuit = EvmCircuit::<F>::get_num_rows_required(block);
-        let num_rows_tx_circuit =
-            TxCircuitConfig::<F>::get_num_rows_required(block.circuits_params.max_txs);
-        num_rows_evm_circuit.max(num_rows_tx_circuit)
+        num_rows_evm_circuit
+        // let num_rows_tx_circuit =
+        //     TxCircuitConfig::<F>::get_num_rows_required(block.circuits_params.max_txs);
+        // num_rows_evm_circuit.max(num_rows_tx_circuit)
     }
 }
 
@@ -283,7 +284,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
         itertools::max([
             EvmCircuit::<F>::unusable_rows(),
             StateCircuit::<F>::unusable_rows(),
-            TxCircuit::<F>::unusable_rows(),
+            // TxCircuit::<F>::unusable_rows(),
             PiCircuit::<F>::unusable_rows(),
             BytecodeCircuit::<F>::unusable_rows(),
             CopyCircuit::<F>::unusable_rows(),
@@ -296,7 +297,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
     fn new_from_block(block: &Block<F>) -> Self {
         let evm_circuit = EvmCircuit::new_from_block(block);
         let state_circuit = StateCircuit::new_from_block(block);
-        let tx_circuit = TxCircuit::new_from_block(block);
+        // let tx_circuit = TxCircuit::new_from_block(block);
         let pi_circuit = PiCircuit::new_from_block(block);
         let bytecode_circuit = BytecodeCircuit::new_from_block(block);
         let copy_circuit = CopyCircuit::new_from_block_no_external(block);
@@ -306,7 +307,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
         SuperCircuit::<_> {
             evm_circuit,
             state_circuit,
-            tx_circuit,
+            // tx_circuit,
             pi_circuit,
             bytecode_circuit,
             copy_circuit,
@@ -322,7 +323,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
         let mut instance = Vec::new();
         instance.extend_from_slice(&self.keccak_circuit.instance());
         instance.extend_from_slice(&self.pi_circuit.instance());
-        instance.extend_from_slice(&self.tx_circuit.instance());
+        // instance.extend_from_slice(&self.tx_circuit.instance());
         instance.extend_from_slice(&self.bytecode_circuit.instance());
         instance.extend_from_slice(&self.copy_circuit.instance());
         instance.extend_from_slice(&self.state_circuit.instance());
@@ -339,11 +340,12 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
         let bytecode = BytecodeCircuit::min_num_rows_block(block);
         let copy = CopyCircuit::min_num_rows_block(block);
         let keccak = KeccakCircuit::min_num_rows_block(block);
-        let tx = TxCircuit::min_num_rows_block(block);
+        // let tx = TxCircuit::min_num_rows_block(block);
         let exp = ExpCircuit::min_num_rows_block(block);
         let pi = PiCircuit::min_num_rows_block(block);
 
-        let rows: Vec<(usize, usize)> = vec![evm, state, bytecode, copy, keccak, tx, exp, pi];
+        let rows: Vec<(usize, usize)> =
+            vec![evm, state, bytecode, copy, keccak, /* tx, */ exp, pi];
         let (rows_without_padding, rows_with_padding): (Vec<usize>, Vec<usize>) =
             rows.into_iter().unzip();
         (
@@ -363,8 +365,8 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
             .synthesize_sub(&config.keccak_circuit, challenges, layouter)?;
         self.bytecode_circuit
             .synthesize_sub(&config.bytecode_circuit, challenges, layouter)?;
-        self.tx_circuit
-            .synthesize_sub(&config.tx_circuit, challenges, layouter)?;
+        // self.tx_circuit
+        //     .synthesize_sub(&config.tx_circuit, challenges, layouter)?;
         self.state_circuit
             .synthesize_sub(&config.state_circuit, challenges, layouter)?;
         self.copy_circuit

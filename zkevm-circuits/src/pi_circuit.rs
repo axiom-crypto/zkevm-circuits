@@ -31,7 +31,7 @@ use crate::{
         ZERO_BYTE_GAS_COST,
     },
     table::{BlockTable, KeccakTable, LookupTable, TxFieldTag, TxTable},
-    tx_circuit::TX_LEN,
+    // tx_circuit::TX_LEN,
     util::{word::Word, Challenges, SubCircuit, SubCircuitConfig},
     witness,
 };
@@ -44,6 +44,9 @@ use halo2_proofs::{
     plonk::{Advice, Column, ConstraintSystem, Error, Fixed, Selector},
     poly::Rotation,
 };
+
+/// lmao
+pub const TX_LEN: usize = 10;
 
 /// Config for PiCircuit
 #[derive(Clone, Debug)]
