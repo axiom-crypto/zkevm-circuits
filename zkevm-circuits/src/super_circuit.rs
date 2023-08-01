@@ -62,12 +62,12 @@ use crate::{
     exp_circuit::{ExpCircuit, ExpCircuitConfig},
     keccak_circuit::{KeccakCircuit, KeccakCircuitConfig, KeccakCircuitConfigArgs},
     pi_circuit::{PiCircuit, PiCircuitConfig, PiCircuitConfigArgs},
-    // state_circuit::{StateCircuit, StateCircuitConfig, StateCircuitConfigArgs},
+    // state_circuit::{StateCircuit, StateCircuitConfig, StateCircuitConfigArgs}, CHANGE
     table::{
         BlockTable, BytecodeTable, CopyTable, ExpTable, KeccakTable, MptTable, RwTable, TxTable,
         UXTable,
     },
-    // tx_circuit::{TxCircuit, TxCircuitConfig, TxCircuitConfigArgs},
+    // tx_circuit::{TxCircuit, TxCircuitConfig, TxCircuitConfigArgs}, CHANGE
     util::{log2_ceil, Challenges, SubCircuit, SubCircuitConfig},
     witness::{block_convert, Block, MptUpdates},
 };
@@ -92,7 +92,7 @@ pub struct SuperCircuitConfig<F: Field> {
     u10_table: UXTable<10>,
     u16_table: UXTable<16>,
     evm_circuit: EvmCircuitConfig<F>,
-    // state_circuit: StateCircuitConfig<F>,
+    // state_circuit: StateCircuitConfig<F>, CHANGE
     // tx_circuit: TxCircuitConfig<F>,
     bytecode_circuit: BytecodeCircuitConfig<F>,
     copy_circuit: CopyCircuitConfig<F>,
@@ -165,7 +165,7 @@ impl<F: Field> SubCircuitConfig<F> for SuperCircuitConfig<F> {
                 challenges: challenges.clone(),
             },
         );
-        // let tx_circuit = TxCircuitConfig::new(
+        // let tx_circuit = TxCircuitConfig::new( CHANGE
         //     meta,
         //     TxCircuitConfigArgs {
         //         tx_table: tx_table.clone(),
@@ -192,7 +192,7 @@ impl<F: Field> SubCircuitConfig<F> for SuperCircuitConfig<F> {
                 challenges: challenges.clone(),
             },
         );
-        // let state_circuit = StateCircuitConfig::new(
+        // let state_circuit = StateCircuitConfig::new( CHANGE
         //     meta,
         //     StateCircuitConfigArgs {
         //         rw_table,
@@ -227,7 +227,7 @@ impl<F: Field> SubCircuitConfig<F> for SuperCircuitConfig<F> {
             u10_table,
             u16_table,
             evm_circuit,
-            // state_circuit,
+            // state_circuit, CHANGE
             copy_circuit,
             // tx_circuit,
             bytecode_circuit,
@@ -244,7 +244,7 @@ pub struct SuperCircuit<F: Field> {
     /// EVM Circuit
     pub evm_circuit: EvmCircuit<F>,
     /// State Circuit
-    // pub state_circuit: StateCircuit<F>,
+    // pub state_circuit: StateCircuit<F>, CHANGE
     /// The transaction circuit that will be used in the `synthesize` step.
     // pub tx_circuit: TxCircuit<F>,
     /// Public Input Circuit
@@ -269,7 +269,7 @@ impl<F: Field> SuperCircuit<F> {
         let num_rows_evm_circuit = EvmCircuit::<F>::get_num_rows_required(block);
         num_rows_evm_circuit
         // let num_rows_tx_circuit =
-        //     TxCircuitConfig::<F>::get_num_rows_required(block.circuits_params.max_txs);
+        //     TxCircuitConfig::<F>::get_num_rows_required(block.circuits_params.max_txs); CHANGE
         // num_rows_evm_circuit.max(num_rows_tx_circuit)
     }
 }
@@ -283,7 +283,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
     fn unusable_rows() -> usize {
         itertools::max([
             EvmCircuit::<F>::unusable_rows(),
-            // StateCircuit::<F>::unusable_rows(),
+            // StateCircuit::<F>::unusable_rows(), CHANGE
             // TxCircuit::<F>::unusable_rows(),
             PiCircuit::<F>::unusable_rows(),
             BytecodeCircuit::<F>::unusable_rows(),
@@ -296,7 +296,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
 
     fn new_from_block(block: &Block<F>) -> Self {
         let evm_circuit = EvmCircuit::new_from_block(block);
-        // let state_circuit = StateCircuit::new_from_block(block);
+        // let state_circuit = StateCircuit::new_from_block(block); CHANGE
         // let tx_circuit = TxCircuit::new_from_block(block);
         let pi_circuit = PiCircuit::new_from_block(block);
         let bytecode_circuit = BytecodeCircuit::new_from_block(block);
@@ -306,7 +306,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
 
         SuperCircuit::<_> {
             evm_circuit,
-            // state_circuit,
+            // state_circuit, CHANGE
             // tx_circuit,
             pi_circuit,
             bytecode_circuit,
@@ -323,7 +323,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
         let mut instance = Vec::new();
         instance.extend_from_slice(&self.keccak_circuit.instance());
         instance.extend_from_slice(&self.pi_circuit.instance());
-        // instance.extend_from_slice(&self.tx_circuit.instance());
+        // instance.extend_from_slice(&self.tx_circuit.instance()); CHANGE
         instance.extend_from_slice(&self.bytecode_circuit.instance());
         instance.extend_from_slice(&self.copy_circuit.instance());
         // instance.extend_from_slice(&self.state_circuit.instance());
@@ -336,7 +336,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
     /// Return the minimum number of rows required to prove the block
     fn min_num_rows_block(block: &Block<F>) -> (usize, usize) {
         let evm = EvmCircuit::min_num_rows_block(block);
-        // let state = StateCircuit::min_num_rows_block(block);
+        // let state = StateCircuit::min_num_rows_block(block); CHANGE
         let bytecode = BytecodeCircuit::min_num_rows_block(block);
         let copy = CopyCircuit::min_num_rows_block(block);
         let keccak = KeccakCircuit::min_num_rows_block(block);
@@ -369,7 +369,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
         self.bytecode_circuit
             .synthesize_sub(&config.bytecode_circuit, challenges, layouter)?;
         // self.tx_circuit
-        //     .synthesize_sub(&config.tx_circuit, challenges, layouter)?;
+        //     .synthesize_sub(&config.tx_circuit, challenges, layouter)?; CHANGE
         // self.state_circuit
         //     .synthesize_sub(&config.state_circuit, challenges, layouter)?;
         self.copy_circuit
@@ -434,13 +434,13 @@ impl<F: Field> Circuit<F> for SuperCircuit<F> {
             Value::known(block.randomness),
             Value::known(block.randomness),
         );
-        // let rws = &self.state_circuit.rows;
+        // let rws = &self.state_circuit.rows; CHANGE
 
         config.block_table.load(&mut layouter, &block.context)?;
 
         // config
         //     .mpt_table
-        //     .load(&mut layouter, &MptUpdates::mock_from(rws))?;
+        //     .load(&mut layouter, &MptUpdates::mock_from(rws))?; CHANGE
 
         config.u8_table.load(&mut layouter)?;
         config.u10_table.load(&mut layouter)?;

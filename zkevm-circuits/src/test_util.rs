@@ -2,7 +2,7 @@
 
 use crate::{
     evm_circuit::{cached::EvmCircuitCached, EvmCircuit},
-    // state_circuit::StateCircuit,
+    // state_circuit::StateCircuit, CHANGE
     util::SubCircuit,
     witness::{Block, Rw},
 };
@@ -214,7 +214,7 @@ impl<const NACC: usize, const NTX: usize> CircuitTestBuilder<NACC, NTX> {
         }
 
         // Run state circuit test
-        // TODO: use randomness as one of the circuit public input, since randomness in
+        // TODO: use randomness as one of the circuit public input, since randomness in CHANGE
         // state circuit and evm circuit must be same
         // {
         //     let rows_needed = StateCircuit::<Fr>::min_num_rows_block(&block).1;

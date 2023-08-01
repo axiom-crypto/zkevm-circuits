@@ -31,7 +31,7 @@ use crate::{
         ZERO_BYTE_GAS_COST,
     },
     table::{BlockTable, KeccakTable, LookupTable, TxFieldTag, TxTable},
-    // tx_circuit::TX_LEN,
+    // tx_circuit::TX_LEN, CHANGE
     util::{word::Word, Challenges, SubCircuit, SubCircuitConfig},
     witness,
 };
