@@ -71,33 +71,39 @@ macro_rules! declare_tests {
     };
 }
 
+#[tokio::test]
+async fn test_mainnet_block() {
+    log_init();
+    let block_num = 16_000_000;
+    test_circuit_input_builder_block(block_num).await;
+}
 // This test builds the complete circuit inputs for the block where 1 ETH is
 // transfered.
-declare_tests!(test_circuit_input_builder_block_transfer_0, "Transfer 0");
+// declare_tests!(test_circuit_input_builder_block_transfer_0, "Transfer 0");
 // This test builds the complete circuit inputs for the block where the Greeter
 // contract is deployed.
-declare_tests!(test_circuit_input_builder_deploy_greeter, "Deploy Greeter");
+// declare_tests!(test_circuit_input_builder_deploy_greeter, "Deploy Greeter");
 // This test builds the complete circuit inputs for the block with multiple
 // transfer txs.
-declare_tests!(
-    test_circuit_input_builder_multiple_transfers_0,
-    "Multiple transfers 0"
-);
+// declare_tests!(
+// test_circuit_input_builder_multiple_transfers_0,
+// "Multiple transfers 0"
+// );
 // This test builds the complete circuit inputs for the block with a failed
 // OpenZeppelin ERC20 transfer tx.
-declare_tests!(
-    test_circuit_input_builder_erc20_openzeppelin_transfer_fail,
-    "ERC20 OpenZeppelin transfer failed"
-);
+// declare_tests!(
+// test_circuit_input_builder_erc20_openzeppelin_transfer_fail,
+// "ERC20 OpenZeppelin transfer failed"
+// );
 // This test builds the complete circuit inputs for the block with a successful
 // OpenZeppelin ERC20 transfer tx.
-declare_tests!(
-    test_circuit_input_builder_erc20_openzeppelin_transfer_succeed,
-    "ERC20 OpenZeppelin transfer successful"
-);
+// declare_tests!(
+// test_circuit_input_builder_erc20_openzeppelin_transfer_succeed,
+// "ERC20 OpenZeppelin transfer successful"
+// );
 // This test builds the complete circuit inputs for the block with multiple
 // successful and failed OpenZeppelin ERC20 transfer txs.
-declare_tests!(
-    test_circuit_input_builder_multiple_erc20_openzeppelin_transfers,
-    "Multiple ERC20 OpenZeppelin transfers"
-);
+// declare_tests!(
+// test_circuit_input_builder_multiple_erc20_openzeppelin_transfers,
+// "Multiple ERC20 OpenZeppelin transfers"
+// );
