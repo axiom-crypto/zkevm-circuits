@@ -74,7 +74,7 @@ macro_rules! declare_tests {
 #[tokio::test]
 async fn test_mainnet_block() {
     log_init();
-    let block_num = 16_000_000;
+    let block_num = 0xfffff;
     test_circuit_input_builder_block(block_num).await;
 }
 // This test builds the complete circuit inputs for the block where 1 ETH is

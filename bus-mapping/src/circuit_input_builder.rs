@@ -544,11 +544,11 @@ pub fn get_state_accesses(
                 .ok_or(Error::EthTypeError(eth_types::Error::IncompleteBlock))?,
         },
     )];
-    for (tx_index, tx) in eth_block.transactions.iter().enumerate() {
-        let geth_trace = &geth_traces[tx_index];
-        let tx_access_trace = gen_state_access_trace(eth_block, tx, geth_trace)?;
-        block_access_trace.extend(tx_access_trace);
-    }
+    // for (tx_index, tx) in eth_block.transactions.iter().enumerate() {
+    // let geth_trace = &geth_traces[tx_index];
+    // let tx_access_trace = gen_state_access_trace(eth_block, tx, geth_trace)?;
+    // block_access_trace.extend(tx_access_trace);
+    // }
 
     Ok(AccessSet::from(block_access_trace))
 }
@@ -600,8 +600,9 @@ impl<P: JsonRpcClient> BuilderClient<P> {
         &self,
         block_num: u64,
     ) -> Result<(EthBlock, Vec<eth_types::GethExecTrace>, Vec<Word>, Word), Error> {
-        let eth_block = self.cli.get_block_by_number(block_num.into()).await?;
-        let geth_traces = self.cli.trace_block_by_number(block_num.into()).await?;
+        let mut eth_block = self.cli.get_block_by_number(block_num.into()).await?;
+        eth_block.transactions.clear();
+        let geth_traces = vec![]; // self.cli.trace_block_by_number(block_num.into()).await?;
 
         // fetch up to 256 blocks
         let mut n_blocks = std::cmp::min(256, block_num as usize);

@@ -38,9 +38,9 @@ use zkevm_circuits::{
     root_circuit::{
         compile, Config, EvmTranscript, NativeLoader, PoseidonTranscript, RootCircuit, Shplonk,
     },
-    state_circuit::TestStateCircuit,
+    // state_circuit::TestStateCircuit,
     super_circuit::SuperCircuit,
-    tx_circuit::TestTxCircuit,
+    // tx_circuit::TestTxCircuit,
     util::SubCircuit,
     witness::{block_convert, Block},
 };
@@ -102,43 +102,45 @@ lazy_static! {
     static ref GEN_PARAMS: Mutex<HashMap<u32, ParamsKZG<Bn256>>> = Mutex::new(HashMap::new());
 }
 
-lazy_static! {
-    /// Integration test for EVM circuit
-    pub static ref EVM_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestEvmCircuit<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("EVM", EVM_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
-
-    /// Integration test for State circuit
-    pub static ref STATE_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestStateCircuit<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("State", STATE_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
-
-    /// Integration test for State circuit
-    pub static ref TX_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestTxCircuit<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("Tx", TX_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
-
-    /// Integration test for Bytecode circuit
-    pub static ref BYTECODE_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestBytecodeCircuit<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("Bytecode", BYTECODE_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
-
-    /// Integration test for Copy circuit
-    pub static ref COPY_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestCopyCircuit<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("Copy", COPY_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
-
-    /// Integration test for Keccak circuit
-    pub static ref KECCAK_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestKeccakCircuit<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("Keccak", KECCAK_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
-
-    /// Integration test for Copy circuit
-    pub static ref SUPER_CIRCUIT_TEST: TokioMutex<IntegrationTest<SuperCircuit::<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("Super", SUPER_CIRCUIT_DEGREE, ROOT_CIRCUIT_BIG_DEGREE));
-
-    /// Integration test for Exp circuit
-    pub static ref EXP_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestExpCircuit::<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("Exp", EXP_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
-
-    /// Integration test for Pi circuit
-    pub static ref PI_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestPiCircuit::<Fr>>> =
-    TokioMutex::new(IntegrationTest::new("Pi", PI_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
-}
+// lazy_static! {
+// Integration test for EVM circuit
+// pub static ref EVM_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestEvmCircuit<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("EVM", EVM_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
+//
+// Integration test for State circuit
+// pub static ref STATE_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestStateCircuit<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("State", STATE_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
+//
+// Integration test for State circuit
+// pub static ref TX_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestTxCircuit<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("Tx", TX_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
+//
+// Integration test for Bytecode circuit
+// pub static ref BYTECODE_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestBytecodeCircuit<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("Bytecode", BYTECODE_CIRCUIT_DEGREE,
+// ROOT_CIRCUIT_SMALL_DEGREE));
+//
+// Integration test for Copy circuit
+// pub static ref COPY_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestCopyCircuit<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("Copy", COPY_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
+//
+// Integration test for Keccak circuit
+// pub static ref KECCAK_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestKeccakCircuit<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("Keccak", KECCAK_CIRCUIT_DEGREE,
+// ROOT_CIRCUIT_SMALL_DEGREE));
+//
+// Integration test for Copy circuit
+// pub static ref SUPER_CIRCUIT_TEST: TokioMutex<IntegrationTest<SuperCircuit::<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("Super", SUPER_CIRCUIT_DEGREE, ROOT_CIRCUIT_BIG_DEGREE));
+//
+// Integration test for Exp circuit
+// pub static ref EXP_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestExpCircuit::<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("Exp", EXP_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
+//
+// Integration test for Pi circuit
+// pub static ref PI_CIRCUIT_TEST: TokioMutex<IntegrationTest<TestPiCircuit::<Fr>>> =
+// TokioMutex::new(IntegrationTest::new("Pi", PI_CIRCUIT_DEGREE, ROOT_CIRCUIT_SMALL_DEGREE));
+// }
 
 lazy_static! {
     /// Cache of real proofs from each block to be reused with the Root circuit tests

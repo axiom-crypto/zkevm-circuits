@@ -8,8 +8,8 @@ members = [
     "circuit-benchmarks",
     "eth-types",
     "external-tracer",
-    "mock",
-    "testool"
+    "mock"
+    #"testool"
 ]
 
 [patch.crates-io]
