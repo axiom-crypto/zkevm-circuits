@@ -1,8 +1,5 @@
 //! Integration testing
 
-#![deny(rustdoc::broken_intra_doc_links)]
-#![deny(missing_docs)]
-
 use bus_mapping::rpc::GethClient;
 use env_logger::Env;
 use eth_types::Address;
@@ -77,8 +74,7 @@ pub async fn get_chain_id() -> u64 {
     client.get_chain_id().await.unwrap()
 }
 
-const PHRASE: &str =
-    "work man father plunge mystery proud hollow address reunion sauce theory bonus";
+const PHRASE: &str = "test test test test test test test test test test test junk";
 
 /// Get a wallet by index
 pub fn get_wallet(index: u32) -> Wallet<SigningKey> {

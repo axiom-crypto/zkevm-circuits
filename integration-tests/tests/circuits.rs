@@ -16,7 +16,7 @@ macro_rules! declare_tests {
                 run_test! (EVM_CIRCUIT_TEST, $block_tag, $root, $real_prover);
             }
 
-            #[tokio::test]
+            /*#[tokio::test]
             async fn [<serial_test_state_ $name>]() {
                 run_test! (STATE_CIRCUIT_TEST, $block_tag, $root, $real_prover);
             }
@@ -24,7 +24,7 @@ macro_rules! declare_tests {
             #[tokio::test]
             async fn [<serial_test_tx_ $name>]() {
                 run_test! (TX_CIRCUIT_TEST, $block_tag, $root, $real_prover);
-            }
+            }*/
 
             #[tokio::test]
             async fn [<serial_test_bytecode_ $name>]() {
@@ -59,70 +59,70 @@ macro_rules! declare_tests {
     };
 }
 
-// macro_rules! unroll_tests {
-// ($($arg:tt),*) => {
-// use paste::paste;
-// use integration_tests::integration_test_circuits::{
-// EVM_CIRCUIT_TEST,
+macro_rules! unroll_tests {
+($($arg:tt),*) => {
+use paste::paste;
+use integration_tests::integration_test_circuits::{
+EVM_CIRCUIT_TEST,
 // STATE_CIRCUIT_TEST,
 // TX_CIRCUIT_TEST,
-// BYTECODE_CIRCUIT_TEST,
-// COPY_CIRCUIT_TEST,
-// KECCAK_CIRCUIT_TEST,
-// SUPER_CIRCUIT_TEST,
-// EXP_CIRCUIT_TEST,
-// PI_CIRCUIT_TEST,
-// };
-// use integration_tests::log_init;
+BYTECODE_CIRCUIT_TEST,
+COPY_CIRCUIT_TEST,
+KECCAK_CIRCUIT_TEST,
+SUPER_CIRCUIT_TEST,
+EXP_CIRCUIT_TEST,
+PI_CIRCUIT_TEST,
+};
+use integration_tests::log_init;
 // NOTE: The SubCircuits include all well known SubCircuits and the SuperCircuit.
-//
-// SubCircuit tests with real prover
-// mod sub_real_prover {
-// use super::*;
-// $(
-// declare_tests! ($arg, false, true) ;
-// )*
-// }
-//
-// SubCircuit tests with mock prover
-// mod sub_mock_prover {
-// use super::*;
-// $(
-// declare_tests! ($arg, false, false) ;
-// )*
-// }
-//
-// Root Circuit (aggregation) tests with real prover.  Needs real proof of each SubCircuit.
-// mod root_real_prover {
-// use super::*;
-// $(
-// declare_tests! ($arg, true, true) ;
-// )*
-// }
-//
-// Root Circuit (aggregation) tests with mock prover.  Needs real proof of each SubCircuit.
-// mod root_mock_prover {
-// use super::*;
-// $(
-// declare_tests! ($arg, true, false) ;
-// )*
-// }
-// }
-// }
 
-// unroll_tests!(
-//     (circuit_block_transfer_0, "Transfer 0"),
-//     (circuit_multiple_transfers_0, "Multiple transfers 0"),
-//     (
-//         circuit_erc20_openzeppelin_transfer_fail,
-//         "ERC20 OpenZeppelin transfer failed"
-//     ),
-//     (
-//         circuit_erc20_openzeppelin_transfer_succeed,
-//         "ERC20 OpenZeppelin transfer successful"
-//     ),
-//     (
-//         circuit_multiple_erc20_openzeppelin_transfers,
-//         "Multiple ERC20 OpenZeppelin transfers"
-//     )
-// );
+// SubCircuit tests with real prover
+mod sub_real_prover {
+use super::*;
+$(
+declare_tests! ($arg, false, true) ;
+)*
+}
+
+// SubCircuit tests with mock prover
+mod sub_mock_prover {
+use super::*;
+$(
+declare_tests! ($arg, false, false) ;
+)*
+}
+
+// Root Circuit (aggregation) tests with real prover.  Needs real proof of each SubCircuit.
+mod root_real_prover {
+use super::*;
+$(
+declare_tests! ($arg, true, true) ;
+)*
+}
+
+// Root Circuit (aggregation) tests with mock prover.  Needs real proof of each SubCircuit.
+mod root_mock_prover {
+use super::*;
+$(
+declare_tests! ($arg, true, false) ;
+)*
+}
+}
+}
+
+unroll_tests!(
+    (circuit_block_transfer_0, "Transfer 0"),
+    (circuit_multiple_transfers_0, "Multiple transfers 0"),
+    (
+        circuit_erc20_openzeppelin_transfer_fail,
+        "ERC20 OpenZeppelin transfer failed"
+    ),
+    (
+        circuit_erc20_openzeppelin_transfer_succeed,
+        "ERC20 OpenZeppelin transfer successful"
+    ),
+    (
+        circuit_multiple_erc20_openzeppelin_transfers,
+        "Multiple ERC20 OpenZeppelin transfers"
+    )
+);

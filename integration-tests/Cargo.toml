@@ -30,7 +30,7 @@ mock = { path = "../mock" }
 pretty_assertions = "1.0.0"
 
 [features]
-default = ["circuit_input_builder"]
+default = ["circuit_input_builder", "circuits", "mock_prover", "rpc"]
 rpc = []
 circuit_input_builder = []
 circuits = []

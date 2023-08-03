@@ -223,7 +223,7 @@ async fn main() {
     let cli = get_client();
 
     // Fund NUM_TXS wallets from coinbase
-    cli.miner_stop().await.expect("cannot stop miner");
+    // cli.miner_stop().await.expect("cannot stop miner");
     let mut pending_txs = Vec::new();
     for wallet in &wallets[0..NUM_TXS] {
         let tx = TransactionRequest::new()
@@ -236,7 +236,7 @@ async fn main() {
                 .expect("cannot send tx"),
         );
     }
-    cli.miner_start().await.expect("cannot start miner");
+    // cli.miner_start().await.expect("cannot start miner");
     for tx in pending_txs {
         tx.await.expect("cannot confirm tx");
     }
@@ -244,7 +244,7 @@ async fn main() {
     blocks.insert("Fund wallets".to_string(), block_num.as_u64());
 
     // Make NUM_TXS transfers in a "chain"
-    cli.miner_stop().await.expect("cannot stop miner");
+    // cli.miner_stop().await.expect("cannot stop miner");
     let mut pending_txs = Vec::new();
     for i in 0..NUM_TXS {
         let tx = TransactionRequest::new()
@@ -258,7 +258,7 @@ async fn main() {
                 .expect("cannot send tx"),
         );
     }
-    cli.miner_start().await.expect("cannot start miner");
+    // cli.miner_start().await.expect("cannot start miner");
     for tx in pending_txs {
         tx.await.expect("cannot confirm tx");
     }
@@ -322,7 +322,7 @@ async fn main() {
     // - wallet1 -> wallet0 (ok)
     // - wallet3 -> wallet2 (ko)
     info!("Doing OpenZeppelin ERC20 multiple transfers...");
-    cli.miner_stop().await.expect("cannot stop miner");
+    // cli.miner_stop().await.expect("cannot stop miner");
     let mut tx_hashes = Vec::new();
     for (i, (from_i, to_i)) in [(0, 1), (2, 3), (1, 0), (3, 2)].iter().enumerate() {
         let amount = U256::from(0x800000000000000 / (i + 1));
@@ -342,7 +342,7 @@ async fn main() {
         let tx_hash = *pending_tx; // Deref for PendingTransaction returns TxHash
         tx_hashes.push(tx_hash);
     }
-    cli.miner_start().await.expect("cannot start miner");
+    // cli.miner_start().await.expect("cannot start miner");
     for (i, tx_hash) in tx_hashes.iter().enumerate() {
         let pending_tx = PendingTransaction::new(*tx_hash, wallets[i].inner());
         let receipt = pending_tx.confirmations(0usize).await.unwrap().unwrap();

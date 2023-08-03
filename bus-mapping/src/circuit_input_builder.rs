@@ -224,14 +224,17 @@ impl<'a, C: CircuitsParams> CircuitInputBuilder<C> {
         is_last_tx: bool,
         tx_index: u64,
     ) -> Result<(), Error> {
-        let mut tx = self.new_tx(tx_index, eth_tx, !geth_trace.failed)?;
-        let mut tx_ctx = TransactionContext::new(eth_tx, geth_trace, is_last_tx)?;
+        dbg!(eth_tx);
+        dbg!(tx_index);
+        let mut tx = self.new_tx(tx_index, eth_tx, !geth_trace.failed).unwrap();
+        let mut tx_ctx = TransactionContext::new(eth_tx, geth_trace, is_last_tx).unwrap();
 
         // Generate BeginTx step
         let begin_tx_step = gen_associated_steps(
             &mut self.state_ref(&mut tx, &mut tx_ctx),
             ExecState::BeginTx,
-        )?;
+        )
+        .unwrap();
         tx.steps_mut().push(begin_tx_step);
 
         for (index, geth_step) in geth_trace.struct_logs.iter().enumerate() {
@@ -241,13 +244,15 @@ impl<'a, C: CircuitsParams> CircuitInputBuilder<C> {
                 &geth_step.op,
                 &mut state_ref,
                 &geth_trace.struct_logs[index..],
-            )?;
+            )
+            .unwrap();
             tx.steps_mut().extend(exec_steps);
         }
 
         // Generate EndTx step
         let end_tx_step =
-            gen_associated_steps(&mut self.state_ref(&mut tx, &mut tx_ctx), ExecState::EndTx)?;
+            gen_associated_steps(&mut self.state_ref(&mut tx, &mut tx_ctx), ExecState::EndTx)
+                .unwrap();
         tx.steps_mut().push(end_tx_step);
 
         self.sdb.commit_tx();
@@ -266,7 +271,7 @@ impl CircuitInputBuilder<FixedCParams> {
         geth_traces: &[eth_types::GethExecTrace],
     ) -> Result<&CircuitInputBuilder<FixedCParams>, Error> {
         // accumulates gas across all txs in the block
-        self.begin_handle_block(eth_block, geth_traces)?;
+        self.begin_handle_block(eth_block, geth_traces).unwrap();
         self.set_end_block(self.circuits_params.max_rws);
         Ok(self)
     }
@@ -345,7 +350,8 @@ impl<C: CircuitsParams> CircuitInputBuilder<C> {
                 geth_trace,
                 tx_id == eth_block.transactions.len(),
                 tx_id as u64,
-            )?;
+            )
+            .unwrap();
         }
         // set eth_block
         self.block.eth_block = eth_block.clone();
@@ -544,11 +550,11 @@ pub fn get_state_accesses(
                 .ok_or(Error::EthTypeError(eth_types::Error::IncompleteBlock))?,
         },
     )];
-    // for (tx_index, tx) in eth_block.transactions.iter().enumerate() {
-    // let geth_trace = &geth_traces[tx_index];
-    // let tx_access_trace = gen_state_access_trace(eth_block, tx, geth_trace)?;
-    // block_access_trace.extend(tx_access_trace);
-    // }
+    for (tx_index, tx) in eth_block.transactions.iter().enumerate() {
+        let geth_trace = &geth_traces[tx_index];
+        let tx_access_trace = gen_state_access_trace(eth_block, tx, geth_trace)?;
+        block_access_trace.extend(tx_access_trace);
+    }
 
     Ok(AccessSet::from(block_access_trace))
 }
@@ -600,9 +606,12 @@ impl<P: JsonRpcClient> BuilderClient<P> {
         &self,
         block_num: u64,
     ) -> Result<(EthBlock, Vec<eth_types::GethExecTrace>, Vec<Word>, Word), Error> {
-        let mut eth_block = self.cli.get_block_by_number(block_num.into()).await?;
-        eth_block.transactions.clear();
-        let geth_traces = vec![]; // self.cli.trace_block_by_number(block_num.into()).await?;
+        let eth_block = self
+            .cli
+            .get_block_by_number(block_num.into())
+            .await
+            .unwrap();
+        let geth_traces = self.cli.trace_block(&eth_block).await.unwrap();
 
         // fetch up to 256 blocks
         let mut n_blocks = std::cmp::min(256, block_num as usize);
@@ -702,9 +711,9 @@ impl<P: JsonRpcClient> BuilderClient<P> {
         history_hashes: Vec<Word>,
         prev_state_root: Word,
     ) -> Result<CircuitInputBuilder<FixedCParams>, Error> {
-        let block = Block::new(self.chain_id, history_hashes, prev_state_root, eth_block)?;
+        let block = Block::new(self.chain_id, history_hashes, prev_state_root, eth_block).unwrap();
         let mut builder = CircuitInputBuilder::new(sdb, code_db, block, self.circuits_params);
-        builder.handle_block(eth_block, geth_traces)?;
+        builder.handle_block(eth_block, geth_traces).unwrap();
         Ok(builder)
     }
 
@@ -720,18 +729,20 @@ impl<P: JsonRpcClient> BuilderClient<P> {
         Error,
     > {
         let (eth_block, geth_traces, history_hashes, prev_state_root) =
-            self.get_block(block_num).await?;
-        let access_set = Self::get_state_accesses(&eth_block, &geth_traces)?;
-        let (proofs, codes) = self.get_state(block_num, access_set).await?;
+            self.get_block(block_num).await.unwrap();
+        let access_set = Self::get_state_accesses(&eth_block, &geth_traces).unwrap();
+        let (proofs, codes) = self.get_state(block_num, access_set).await.unwrap();
         let (state_db, code_db) = Self::build_state_code_db(proofs, codes);
-        let builder = self.gen_inputs_from_state(
-            state_db,
-            code_db,
-            &eth_block,
-            &geth_traces,
-            history_hashes,
-            prev_state_root,
-        )?;
+        let builder = self
+            .gen_inputs_from_state(
+                state_db,
+                code_db,
+                &eth_block,
+                &geth_traces,
+                history_hashes,
+                prev_state_root,
+            )
+            .unwrap();
         Ok((builder, eth_block))
     }
 }

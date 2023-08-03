@@ -3,8 +3,8 @@
 
 use crate::Error;
 use eth_types::{
-    Address, Block, Bytes, EIP1186ProofResponse, GethExecTrace, Hash, ResultGethExecTraces,
-    Transaction, Word, U64,
+    Address, AnvilExecTrace, Block, Bytes, EIP1186ProofResponse, GethExecTrace, Hash,
+    ResultGethExecTraces, Transaction, Word, U64,
 };
 pub use ethers_core::types::BlockNumber;
 use ethers_providers::JsonRpcClient;
@@ -93,6 +93,7 @@ impl<P: JsonRpcClient> GethClient<P> {
         &self,
         block_num: BlockNumber,
     ) -> Result<Block<Transaction>, Error> {
+        dbg!(block_num);
         let num = serialize(&block_num);
         let flag = serialize(&true);
         self.0
@@ -130,6 +131,33 @@ impl<P: JsonRpcClient> GethClient<P> {
             .await
             .map_err(|e| Error::JSONRpcError(e.into()))?;
         Ok(resp.0.into_iter().map(|step| step.result).collect())
+    }
+
+    /// Calls `debug_traceTransaction` via JSON-RPC on each transaction in a block, returning a
+    /// [`Vec<GethExecTrace>`] with each GethTrace corresponding to 1
+    /// transaction of the block.
+    pub async fn trace_block(
+        &self,
+        block: &Block<Transaction>,
+    ) -> Result<Vec<GethExecTrace>, Error> {
+        let mut resp = vec![];
+        for tx in &block.transactions {
+            let hash = serialize(&tx.hash);
+            let res: AnvilExecTrace = self
+                .0
+                .request("debug_traceTransaction", [hash])
+                .await
+                .unwrap();
+            dbg!(&res);
+            let res = GethExecTrace {
+                gas: u64::from_str_radix(&res.gas[2..], 16).unwrap(),
+                failed: res.failed,
+                struct_logs: res.struct_logs,
+                return_value: res.return_value,
+            };
+            resp.push(res);
+        }
+        Ok(resp)
     }
 
     /// Calls `eth_getCode` via JSON-RPC returning a contract code

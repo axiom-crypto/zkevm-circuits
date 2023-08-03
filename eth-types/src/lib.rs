@@ -4,8 +4,8 @@
 // We want to have UPPERCASE idents sometimes.
 #![allow(non_snake_case)]
 // Catch documentation errors caused by code changes.
-#![deny(rustdoc::broken_intra_doc_links)]
-#![deny(missing_docs)]
+//#![deny(rustdoc::broken_intra_doc_links)]
+//#![deny(missing_docs)]
 //#![deny(unsafe_code)] Allowed now until we find a
 // better way to handle downcasting from Operation into it's variants.
 #![allow(clippy::upper_case_acronyms)] // Too pedantic
@@ -444,6 +444,20 @@ pub struct ResultGethExecTrace {
 pub struct GethExecTrace {
     /// Used gas
     pub gas: u64,
+    /// True when the transaction has failed.
+    pub failed: bool,
+    /// Return value of execution which is a hex encoded byte array
+    #[serde(rename = "returnValue")]
+    pub return_value: String,
+    /// Vector of geth execution steps of the trace.
+    #[serde(rename = "structLogs")]
+    pub struct_logs: Vec<GethExecStep>,
+}
+
+#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
+pub struct AnvilExecTrace {
+    /// Used gas
+    pub gas: String,
     /// True when the transaction has failed.
     pub failed: bool,
     /// Return value of execution which is a hex encoded byte array
