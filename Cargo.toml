@@ -32,7 +32,8 @@ ethers-providers = { git = "https://github.com/scroll-tech/ethers-rs.git", branc
 ethers = { git = "https://github.com/scroll-tech/ethers-rs.git", branch = "v2.0.7" }
 ethers-signers = { git = "https://github.com/scroll-tech/ethers-rs.git", branch = "v2.0.7" }
 ff = "0.13"
-halo2_proofs = { git = "https://github.com/scroll-tech/halo2.git", branch = "v1.1" }
+# temporary until merge of "circuit-params" fix
+halo2_proofs = { git = "https://github.com/axiom-crypto/halo2.git", branch = "scroll_v1.1" }
 halo2curves = { version = "0.1.0", features = ["derive_serde"] }
 poseidon-base = { package = "poseidon-base", git = "https://github.com/scroll-tech/poseidon-circuit.git", branch = "main" }
 hash-circuit = { package = "poseidon-circuit", git = "https://github.com/scroll-tech/poseidon-circuit.git", branch = "main" }
@@ -92,7 +93,7 @@ gobuild = { git = "https://github.com/scroll-tech/gobuild.git" }
 halo2curves = { git = "https://github.com/scroll-tech/halo2curves", branch = "v0.1.0" }
 
 [patch."https://github.com/privacy-scaling-explorations/halo2.git"]
-halo2_proofs = { git = "https://github.com/scroll-tech/halo2.git", branch = "v1.1" }
+halo2_proofs = { git = "https://github.com/axiom-crypto/halo2.git", branch = "scroll_v1.1" }
 [patch."https://github.com/privacy-scaling-explorations/poseidon.git"]
 poseidon = { git = "https://github.com/scroll-tech/poseidon.git", branch = "main" }
 
